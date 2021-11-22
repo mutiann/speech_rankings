@@ -40,7 +40,7 @@ def main(args):
     command = ' '.join(['--%s %s' % (k, v) for k, v in vars(args).items()])
     authors = [a for a in authors.values() if 'pubs' in a]
     authors.sort(key=lambda x: -len(x['pubs']))
-    for a in authors:
+    for i, a in enumerate(authors):
         if 'google' not in a:
             a['google'] = "https://www.google.com/search?q=scholar " + a['name']
         a['dblp'] = "https://dblp.uni-trier.de/pid/" + a['pid']
@@ -49,6 +49,7 @@ def main(args):
             a['tags'][tag].sort(key=lambda x: -x[1])
         a['tags']['Year'].sort(key=lambda x: -x[0])
         a['pubs'] = a['pubs'][:args.n_pubs]
+        a['rank'] = i + 1
     authors = authors[args.rank_start: args.rank_end]
 
     tm = Template(open('template.html').read())
@@ -68,7 +69,7 @@ if __name__ == '__main__':
                         help="Include authors ranked from")
     parser.add_argument('--rank-end', type=int, default=200,
                         help="Include authors ranked to")
-    parser.add_argument('--output', type=str, default="report.html", help="Output file")
+    parser.add_argument('--output', type=str, default="speech_rankings.html", help="Output file")
 
     args, unparsed = parser.parse_known_args()
     print('unparsed:', unparsed)

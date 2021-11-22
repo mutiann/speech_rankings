@@ -137,9 +137,9 @@ def collect_ieee_keywords():
                 if item['info']['type'] == 'Editorship':
                     continue
                 if k in ['ICASSP', 'TASLP']:
-                    keys = [' sensor ', ' point cloud', ' reid', 'beamforming', ' mimo ', 'radar', 'signal recovery',
+                    keys = [' sensor ', ' point cloud', ' reid', 'beamform', ' mimo ', 'radar', 'signal recovery',
                             'wireless', 'image compression', 'video compression', 'phase retrieval',
-                            'compressed sensing', '3d', 'super resolution',
+                            'compressed sensing', '3d', 'super resolution', 'microphone',
                             'superresolution', 'facial', ' face ', 'coding', 'ctscan', 'ct scan', 'medical',
                             'broadband', ' dsp ', 'remote sensing', ' array', ' doa ', ' time series ',
                             'anomaly detection', 'narrowband', 'sparse decomposition', 'matrix decomposition',
@@ -181,8 +181,6 @@ def collect_interspeech_track():
             url = r'https://www.isca-speech.org/archive/eurospeech_2003/index.html'
         else:
             url = base_url % year
-        if year == '2016':
-            print()
         tracks = get_interspeech_tracks(url)
         paper_to_track = {}
         for tr in tracks:

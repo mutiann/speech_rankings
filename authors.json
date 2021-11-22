@@ -4711,12 +4711,6 @@
   "pid": "56/5140",
   "name": "Yan Tang"
  },
- "58/2984": {
-  "affiliation": [],
-  "url": [],
-  "pid": "58/2984",
-  "name": "Hai Huyen Dam"
- },
  "09/497": {
   "affiliation": [],
   "url": [],
@@ -7428,12 +7422,6 @@
   "pid": "81/829",
   "name": "Jyh-Shing Roger Jang"
  },
- "19/5706": {
-  "affiliation": [],
-  "url": [],
-  "pid": "19/5706",
-  "name": "Takeshi Yamada"
- },
  "80/9231": {
   "affiliation": [],
   "url": [],
@@ -7760,12 +7748,6 @@
   "url": [],
   "pid": "18/7825",
   "name": "Daniel Erro"
- },
- "74/2943": {
-  "affiliation": [],
-  "url": [],
-  "pid": "74/2943",
-  "name": "Nikolay D. Gaubitch"
  },
  "85/9877": {
   "affiliation": [],
@@ -8319,16 +8301,6 @@
   "pid": "80/6099",
   "name": "Simon Keizer"
  },
- "59/3573": {
-  "affiliation": [],
-  "url": [
-   "https://scholar.google.com/citations?user=rZLtenIAAAAJ",
-   "https://zbmath.org/authors/?q=ai:abhayapala.thushara-d"
-  ],
-  "pid": "59/3573",
-  "name": "Thushara D. Abhayapala",
-  "google": "https://scholar.google.com/citations?user=rZLtenIAAAAJ"
- },
  "83/4272": {
   "affiliation": [],
   "url": [],
@@ -8340,6 +8312,16 @@
   "url": [],
   "pid": "18/1739",
   "name": "Themos Stafylakis"
+ },
+ "59/3573": {
+  "affiliation": [],
+  "url": [
+   "https://scholar.google.com/citations?user=rZLtenIAAAAJ",
+   "https://zbmath.org/authors/?q=ai:abhayapala.thushara-d"
+  ],
+  "pid": "59/3573",
+  "name": "Thushara D. Abhayapala",
+  "google": "https://scholar.google.com/citations?user=rZLtenIAAAAJ"
  },
  "119/2349": {
   "affiliation": [],
@@ -8791,12 +8773,6 @@
   "name": "Yong Xu 0004",
   "google": "https://scholar.google.com/citations?user=nCmKPM4AAAAJ"
  },
- "47/9236": {
-  "affiliation": [],
-  "url": [],
-  "pid": "47/9236",
-  "name": "Yu Ting Yeung"
- },
  "160/8144": {
   "affiliation": [],
   "url": [],
@@ -8828,12 +8804,6 @@
   "url": [],
   "pid": "80/6481",
   "name": "Jun Deng"
- },
- "155/1911": {
-  "affiliation": [],
-  "url": [],
-  "pid": "155/1911",
-  "name": "Matthias Zöhrer"
  },
  "92/6322": {
   "affiliation": [
@@ -8885,12 +8855,6 @@
   "url": [],
   "pid": "86/11429",
   "name": "Xie Chen"
- },
- "139/7456": {
-  "affiliation": [],
-  "url": [],
-  "pid": "139/7456",
-  "name": "Alastair H. Moore"
  },
  "s/MarkBSandler": {
   "affiliation": [
@@ -9019,12 +8983,6 @@
   "url": [],
   "pid": "175/8860",
   "name": "Lahiru Samarakoon"
- },
- "85/10805": {
-  "affiliation": [],
-  "url": [],
-  "pid": "85/10805",
-  "name": "Henning F. Schepker"
  },
  "120/7177": {
   "affiliation": [
@@ -9162,12 +9120,6 @@
   "url": [],
   "pid": "82/8616",
   "name": "Tomoki Hayashi"
- },
- "87/288": {
-  "affiliation": [],
-  "url": [],
-  "pid": "87/288",
-  "name": "Takuya Higuchi"
  },
  "22/3870-1": {
   "affiliation": [
@@ -11457,11 +11409,11 @@
   "pid": "38/9232",
   "name": "Md. Akmal Haidar"
  },
- "59/7156": {
+ "47/9236": {
   "affiliation": [],
   "url": [],
-  "pid": "59/7156",
-  "name": "Jan Skoglund"
+  "pid": "47/9236",
+  "name": "Yu Ting Yeung"
  },
  "70/304": {
   "affiliation": [],
@@ -11544,12 +11496,6 @@
   "url": [],
   "pid": "24/11115",
   "name": "Erfan Loweimi"
- },
- "17/2040": {
-  "affiliation": [],
-  "url": [],
-  "pid": "17/2040",
-  "name": "Akihiko Sugiyama"
  },
  "44/3549-1": {
   "affiliation": [
@@ -11738,6 +11684,12 @@
   "url": [],
   "pid": "139/5456",
   "name": "Jahn Heymann"
+ },
+ "87/288": {
+  "affiliation": [],
+  "url": [],
+  "pid": "87/288",
+  "name": "Takuya Higuchi"
  },
  "68/7247": {
   "affiliation": [],

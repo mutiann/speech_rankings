@@ -34,7 +34,11 @@
 
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">{{author.name}}
+        <h5 class="card-title">
+            <span style="color:#7d848a">#{{author.rank}}&nbsp;</span>
+            <span style="color: white">|</span>
+            {{author.name}}
+            <span style="color: white">|</span>
             <a target="_blank" href="{{author.google}}">
                 <img alt="Google Scholar" src="http://csrankings.org/scholar-favicon.ico" height="15px">
             </a>
@@ -103,7 +107,8 @@
                     ,&nbsp
                 {%- endfor -%}
                 </span> <br>
-                <span style="color:#505b62"><strong>{{pub.title}}</strong></span>
+                <a target="_blank" href="{{pub.url}}" style="text-decoration: none">
+                <span style="color:#505b62"><strong>{{pub.title}}</strong></span></a>
             </p>
             {%- endfor -%}
         </div>
