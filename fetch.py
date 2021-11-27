@@ -92,7 +92,9 @@ def get_interspeech_tracks(url):
 def get_author_info(pid):
     url = r"https://dblp.uni-trier.de/pid/" + pid + ".xml"
     page = get_page(url, {}, os.path.join(cache_path, 'responses'))
-    info = xmltodict.parse(page, force_list=('note', 'url', 'author'))['dblpperson']['person']
+    info = xmltodict.parse(page, force_list=('note', 'url', 'author', 'r'))['dblpperson']
+    papers = info['r']
+    info = info['person']
     result = {'affiliation': [], 'url': [], 'pid': pid, 'name': info['author'][0]['#text']}
     exclude_url = ['orcid.org', 'wikidata.org', 'scopus.com', 'researchgate.net', 'semanticscholar.org',
                    'wikipedia.org', 'isni.org', 'viaf.org', 'id.loc.gov']
@@ -110,4 +112,12 @@ def get_author_info(pid):
             if any([t in url for t in exclude_url]):
                 continue
             result['url'].append(url)
+
+    year_cnt = defaultdict(int)
+    for paper in papers:
+        k = list(paper.keys())[0]
+        assert len(paper.keys()) == 1
+        year = int(paper[k]['year'])
+        year_cnt[year] += 1
+    result['years'] = year_cnt
     return result

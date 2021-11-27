@@ -39,6 +39,8 @@ def main(args):
 
     command = ' '.join(['--%s %s' % (k, v) for k, v in vars(args).items()])
     authors = [a for a in authors.values() if 'pubs' in a]
+    if args.author_start_year is not None:
+        authors = [a for a in authors if min([int(t) for t in a['years'].keys()]) >= args.author_start_year]
     authors.sort(key=lambda x: -len(x['pubs']))
     for i, a in enumerate(authors):
         if 'google' not in a:
@@ -50,7 +52,12 @@ def main(args):
         a['tags']['Year'].sort(key=lambda x: -x[0])
         a['pubs'] = a['pubs'][:args.n_pubs]
         a['rank'] = i + 1
+
+        years = list(a['years'].items())
+        years.sort(key=lambda x: -x[-1])
+        a['years'] = years[:5]
     authors = authors[args.rank_start: args.rank_end]
+    print(json.dumps([a['name'] for a in authors]))
 
     tm = Template(open('template.html').read())
     report = tm.render(authors=authors, command=command,
@@ -61,6 +68,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--year-start', type=int, default=2016, help="Min year")
     parser.add_argument('--year-end', type=int, default=2022, help="Max year")
+    parser.add_argument('--author-start-year', type=int, default=1900,
+                        help="Only consider authors with their first paper after this year")
     parser.add_argument('--exclude-venue', type=str, default="SSW,ASRU,IWSLT,SLT",
                         help="Venues excluded, workshops by default")
     parser.add_argument('--n-pubs', type=int, default=20,

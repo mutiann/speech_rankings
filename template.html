@@ -69,6 +69,11 @@
             {%- for k, v in author.tags.IEEE -%}
             <span class="badge rounded-pill bg-light text-dark">{{k}}: {{v}}</span>
             {%- endfor -%}
+        </div><div class="row-cards">
+            <span class="badge rounded-pill bg-primary">Most Publications</span>
+            {%- for k, v in author.years -%}
+            <span class="badge rounded-pill bg-light text-dark">{{k}}: {{v}}</span>
+            {%- endfor -%}
         </div>
 
         </div>
