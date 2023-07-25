@@ -8,7 +8,7 @@ find desirable advisors.
 The pre-generated report is available at [here](https://mutiann.github.io/speech_rankings). To build it by
 yourself, 
 1. Run `prepare_data.py` to build `publications.json` and `authors.json`, or simply use the data provided in this repository, covering 
-   publications from 2011 to 2021.
+   publications from 2011 to 2022.
 2. Run `export.py` to generate the report.
 
 ## How does it work

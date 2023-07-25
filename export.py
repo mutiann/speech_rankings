@@ -1,5 +1,6 @@
 import argparse
-from jinja2 import Template, escape
+from jinja2 import Template
+from markupsafe import escape
 import json
 from collections import defaultdict
 import datetime
@@ -67,7 +68,7 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--year-start', type=int, default=2016, help="Min year")
-    parser.add_argument('--year-end', type=int, default=2022, help="Max year")
+    parser.add_argument('--year-end', type=int, default=2023, help="Max year")
     parser.add_argument('--author-start-year', type=int, default=1900,
                         help="Only consider authors with their first paper after this year")
     parser.add_argument('--exclude-venue', type=str, default="SSW,ASRU,IWSLT,SLT",

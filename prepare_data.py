@@ -64,7 +64,7 @@ def collect_publ_data():
     os.makedirs(cache_dir, exist_ok=True)
     for key in patterns:
         if key == "SpeechComm":
-            l, r = 36, 135
+            l, r = 36, 151
 
             def issue_to_year(issue):
                 if 18 <= issue <= 47:
@@ -77,17 +77,17 @@ def collect_publ_data():
                     raise ValueError("Unsupported issue %d" % issue)
                 return year
         elif key == "TASLP":
-            l, r = 10, 30
+            l, r = 10, 31
 
             def issue_to_year(issue):
                 return 2021 - (29 - issue)
         else:
-            l, r = 2002, 2022
+            l, r = 2002, 2023
             issue_to_year = None
 
         results = read_series(l, r, patterns[key], key, issue_to_year)
 
-        print("Missing in %s:" % key, [k for k in range(2002, 2022) if k not in results or len(results[k]) == 0])
+        print("Missing in %s:" % key, [k for k in range(2002, 2023) if k not in results or len(results[k]) == 0])
         json.dump(results, open(os.path.join(cache_dir, '%s.json' % key), 'w', encoding='utf-8'), ensure_ascii=False,
                   indent=1)
 
@@ -292,7 +292,7 @@ def aggregate():
 def collect_author_info():
     publs = json.load(open('publications.json', 'r', encoding='utf-8'))
     results = {}
-    # df = pd.read_csv('csrankings.csv')
+    # df = pd.read_csv('csrankings.csv') # Not used, since almost all authors are not in CSRankings
     n_csr = 0
     paper_cnt = defaultdict(int)
 
