@@ -104,6 +104,7 @@ def get_interspeech_tracks(url):
     return tracks
 
 def get_author_info(pid):
+    import re
     url = r"https://dblp.uni-trier.de/pid/" + pid + ".xml"
     page = get_page(url, {}, os.path.join(cache_path, 'responses'))
     info = xmltodict.parse(page, force_list=('note', 'url', 'author', 'r'))['dblpperson']
@@ -134,4 +135,21 @@ def get_author_info(pid):
         year = int(paper[k]['year'])
         year_cnt[year] += 1
     result['years'] = year_cnt
+
+    # Try to do some deduplication, as the same paper may appear multiple times (e.g. published vs arxiv versions)
+    year_cnt = defaultdict(int)
+    appeared_titles = set()
+    for paper in papers:
+        title = list(paper.values())[0]['title']
+        title = ''.join([(t if t.isalnum() else ' ') for t in title]).strip()
+        title = re.sub(r'\s+', ' ', title.lower())
+        if title in appeared_titles:
+            continue
+        appeared_titles.add(title)
+        k = list(paper.keys())[0]
+        assert len(paper.keys()) == 1
+        year = int(paper[k]['year'])
+        year_cnt[year] += 1
+    result['years_dedup'] = year_cnt
+
     return result
