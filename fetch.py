@@ -8,6 +8,8 @@ from bs4 import BeautifulSoup
 from collections import defaultdict
 from requests import Session
 import random
+import time
+import traceback
 
 r = Session()
 
@@ -29,16 +31,27 @@ def get_page(url, params, cache_dir, do_render=False):
     key = urllib.parse.quote(url + urllib.parse.urlencode(params), safe="")
     if os.path.exists(os.path.join(cache_dir, key)):
         page_text = open(os.path.join(cache_dir, key), encoding="utf-8").read()
-    else:
-        page = r.get(url, params=params, headers=get_headers())
-        if do_render:
-            page.html.render()
-        if page.status_code != 200:
-            raise ValueError(page.status_code)
-        page_text = page.content.decode('utf-8')
-        if 'IEEE Xplore Temporarily Unavailable' in page_text:
-            raise ValueError(page.status_code)
-        open(os.path.join(cache_dir, key), 'w', encoding="utf-8").write(page_text)
+        return page_text
+    cnt = 0
+    while True:
+        try:
+            page = r.get(url, params=params, headers=get_headers())
+            if do_render:
+                page.html.render()
+            if page.status_code != 200:
+                raise ValueError(page.status_code)
+            page_text = page.content.decode('utf-8')
+            if 'Temporarily Unavailable' in page_text:
+                raise ValueError(f'Temporarily Unavailable ({page.status_code})')
+            open(os.path.join(cache_dir, key), 'w', encoding="utf-8").write(page_text)
+            break
+        except:
+            time.sleep(10)
+            cnt += 1
+            print("Fail to get page", url, params)
+            traceback.print_exc()
+            if cnt > 5:
+                raise ValueError(url)
     return page_text
 
 def get_dblp_page(url, key):
@@ -52,6 +65,7 @@ def get_dblp_page(url, key):
         if int(response['hits']['@sent']) + int(response['hits']['@first']) >= int(response['hits']['@total']):
             break
         params['f'] += 1000
+        time.sleep(2)
     return result
 
 def get_ieee_meta(url):

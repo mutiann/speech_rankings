@@ -4,15 +4,21 @@ from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 import tqdm
 from functools import partial
 import time
+import datetime
+import html
+import traceback as tb
+import re
 
 import unidecode
 import pandas as pd
 
 from fetch import *
 
+current_year = datetime.date.today().year
+start_year = current_year - 10
 
 def read_series(issue_start, issue_end, pattern, name, issue_to_year=None):
-    base_url = r"https://dblp.uni-trier.de/search/publ/api"
+    base_url = r"https://dblp.org/search/publ/api"
     results = defaultdict(list)
     for issue in tqdm.trange(issue_start, issue_end, desc=name):
         if isinstance(pattern, str):
@@ -22,6 +28,13 @@ def read_series(issue_start, issue_end, pattern, name, issue_to_year=None):
         result = get_dblp_page(base_url, key)
         if not result:
             continue
+        for i in range(len(result)):
+            item = result[i]['info']
+            if 'title' in item:
+                item['title'] = html.unescape(item['title'])
+            else:
+                print("Missing title:", item['url'])
+        result = [r for r in result if 'title' in r['info']]
         if issue_to_year is not None:
             issue = issue_to_year(issue)
         results[issue].extend(result)
@@ -43,12 +56,17 @@ patterns = {
     "AAAI": r"toc:db/conf/aaai/aaai%d.bht:",
     "IJCAI": r"toc:db/conf/ijcai/ijcai%d.bht:",
     "KDD": r"toc:db/conf/kdd/kdd%d.bht:",
+
     "ACL": lambda
         year: r"toc:db/conf/acl/acl%d-1.bht:" % year if year >= 2012 and year != 2020 else r"toc:db/conf/acl/acl%d.bht:" % year,
     "EMNLP": lambda
-        year: r"toc:db/conf/emnlp/emnlp%d-1.bht:" % year if year >= 2019 else r"toc:db/conf/emnlp/emnlp%d.bht:" % year,
+        year: r"toc:db/conf/emnlp/emnlp%d-1.bht:" % year if 2019 <= year <= 2021 else r"toc:db/conf/emnlp/emnlp%d.bht:" % year,
     "NAACL": lambda year: r"toc:db/conf/naacl/naacl%d-1.bht:" % year if year in (
     2018, 2019) else r"toc:db/conf/naacl/naacl%d.bht:" % year,
+
+    "ACL-Findings": r"toc:db/conf/acl/acl%df.bht:",
+    "EMNLP-Findings": r"toc:db/conf/emnlp/emnlp%df.bht:",
+    "NAACL-Findings": r"toc:db/conf/naacl/naacl%df.bht:",
 
     "SSW": r"toc:db/conf/ssw/ssw%d.bht:",
     "ASRU": r"toc:db/conf/asru/asru%d.bht:",
@@ -64,7 +82,7 @@ def collect_publ_data():
     os.makedirs(cache_dir, exist_ok=True)
     for key in patterns:
         if key == "SpeechComm":
-            l, r = 36, 151
+            l, r = 55, 164  # 2014~2024
 
             def issue_to_year(issue):
                 if 18 <= issue <= 47:
@@ -77,17 +95,17 @@ def collect_publ_data():
                     raise ValueError("Unsupported issue %d" % issue)
                 return year
         elif key == "TASLP":
-            l, r = 10, 31
+            l, r = 22, current_year - 1992 + 1
 
             def issue_to_year(issue):
                 return 2021 - (29 - issue)
         else:
-            l, r = 2002, 2023
+            l, r = start_year, current_year + 1
             issue_to_year = None
 
         results = read_series(l, r, patterns[key], key, issue_to_year)
 
-        print("Missing in %s:" % key, [k for k in range(2002, 2023) if k not in results or len(results[k]) == 0])
+        print("Missing in %s:" % key, [k for k in range(start_year, current_year + 1) if k not in results or len(results[k]) == 0])
         json.dump(results, open(os.path.join(cache_dir, '%s.json' % key), 'w', encoding='utf-8'), ensure_ascii=False,
                   indent=1)
 
@@ -107,9 +125,11 @@ def filter_non_speech_venue():
                 print(k, year)
                 results = []
                 for item in publ[year]:
-                    title = item['info'].get('title', '').lower().replace('-', ' ').strip('.')
-                    if ('speech' in title or ' asr ' in title or ' tts ' in title or 'speaker' in title or 'prosody' in title or 'audio' in title or 'voice' in title or ' wave' in title or 'acoustic' in title or 'spoken' in title) \
-                            and not ('hate speech' in title or 'part of speech' in title or 'wavelet' in title or 'imaging' in title or 'parts of speech' in title or 'invited speakers' in title or 'keynote speaker' in title or 'speaker commitment' in title or 'native speaker' in title):
+                    title = item['info'].get('title', '').lower()
+                    title = ''.join([(t if t.isalnum() else ' ') for t in title ]).strip()
+                    title = re.sub(r'\s+', ' ', title)
+                    if ('speech' in title or ' asr ' in title or ' tts ' in title or 'speaker' in title or 'prosody' in title or 'audio' in title or 'voice' in title or 'waveform' in title or 'acoustic' in title or 'spoken' in title) \
+                            and not ('hate' in title or 'part of speech' in title or 'wavelet' in title or 'imaging' in title or 'parts of speech' in title or 'part of speech' in title or 'invited speakers' in title or 'keynote speaker' in title or 'speaker commitment' in title or 'native speaker' in title or 'waveform inversion' in title or 'blood' in title):
                         print(item['info']['title'])
                         results.append(item)
                 publ[year] = results
@@ -120,14 +140,13 @@ def collect_ieee_keywords():
     ieee_venues = ['ICASSP', 'TASLP', 'ASRU', 'SLT']
     cache_dir = os.path.join(cache_path, 'publ_ex')
     os.makedirs(cache_dir, exist_ok=True)
-
-    executor = ProcessPoolExecutor(max_workers=4)
+    executor = ThreadPoolExecutor(max_workers=4)
 
     for k in ieee_venues:
         publ = json.load(open(os.path.join(cache_path, 'publ_all', '%s.json' % k), 'r', encoding='utf-8'))
         years = list(publ.keys())
         for year in tqdm.tqdm(years, desc=k):
-            if int(year) < 2011: # Reduce costs
+            if int(year) < start_year:
                 continue
 
             futures = []
@@ -145,13 +164,15 @@ def collect_ieee_keywords():
                             'anomaly detection', 'narrowband', 'sparse decomposition', 'matrix decomposition',
                             'matrix completion']
                     if any([t in title for t in keys]):
+                        # print("Skip by title:", item['info']['title'])
                         continue
                 futures.append((item, executor.submit(partial(get_ieee_meta, url))))
             print("%d/%d papers skipped" % (len(publ[year]) - len(futures), len(publ[year])))
-            for item, f in tqdm.tqdm(futures):
+            for item, f in futures:
                 try:
                     meta = f.result()
                 except:
+                    tb.print_exc()
                     print(item['info']['ee'], item['info']['title'])
                     time.sleep(0.5)
                     continue
@@ -172,13 +193,13 @@ def collect_interspeech_track():
     os.makedirs(cache_dir, exist_ok=True)
     publ = json.load(open(os.path.join(cache_path, 'publ_all', 'Interspeech.json'), 'r', encoding='utf-8'))
     years = list(publ.keys())
-    base_url = r"https://www.isca-speech.org/archive/interspeech_%s/index.html"
+    base_url = r"https://www.isca-archive.org/interspeech_%s/index.html"
     escapes = {'&quot;': r'"', '²': r"'", '&amp;': '&', '&apos;': r"'", ', 000': ',000', ', ..': ',..'}
     for year in tqdm.tqdm(years):
         if year == '2002':
-            url = r'https://www.isca-speech.org/archive/icslp_2002/index.html'
+            url = r'https://www.isca-archive.org/icslp_2002/index.html'
         elif year == '2003':
-            url = r'https://www.isca-speech.org/archive/eurospeech_2003/index.html'
+            url = r'https://www.isca-archive.org/eurospeech_2003/index.html'
         else:
             url = base_url % year
         tracks = get_interspeech_tracks(url)
@@ -197,6 +218,7 @@ def collect_interspeech_track():
         n_missing = 0
         for paper in publ[year]:
             title = paper['info']['title'].lower().strip('.')
+            title = title.replace("Auotmatic", "Automatic") # Some mysterious typo in IS2022
             for k in escapes:
                 title = title.replace(k, escapes[k])
             if ' - ' in title and title[0] == '"':
@@ -206,7 +228,7 @@ def collect_interspeech_track():
             title = unidecode.unidecode(title)
             title = ''.join([p for p in title if p.islower()])
             if title not in paper_to_track:
-                print(title)
+                print("Missing:", paper['info']['title'])
                 n_missing += 1
                 continue
             paper['info']['isca_track'] = paper_to_track[title]
