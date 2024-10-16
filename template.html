@@ -25,11 +25,13 @@
 <body>
 <div class="container">
     <h1>Speech Rankings</h1>
-    <p style="font-size: small">
+    <p class="lead">
         A list of researchers in the area of speech ordered by the number of relevant publications,
         for the purpose of identifying potential academic supervisors.
-        See <a href="https://github.com/mutiann/speech_rankings">here</a> for details.<br>
-        Generated at {{timestamp}}, arguments: {{command}}<br>
+    </p>
+    <p style="font-size: small">
+        Report exported at {{timestamp}}, see <a href="https://github.com/mutiann/speech_rankings">here</a> for how it is created. <br>
+        Export parameters: {{command}}
     </p>
 
 {%- for author in authors -%}
@@ -41,38 +43,39 @@
             <span style="color: white">|</span>
             {{author.name}}
             <span style="color: white">|</span>
+
+            <a target="_blank" href="{{author.dblp}}">
+                <img alt="DBLP" src="https://dblp.org/img/favicon.ico" height="15px">
+            </a>
+
             <a target="_blank" href="{{author.google}}">
                 <img alt="Google Scholar" src="http://csrankings.org/scholar-favicon.ico" height="15px">
             </a>
             &nbsp;
-
-            <a target="_blank" href="{{author.dblp}}">
-                <img alt="DBLP" src="https://dblp.uni-trier.de/img/favicon.ico" height="15px">
-            </a>
         </h5>
         <div>
             <div class="row-cards">
-            <span class="badge rounded-pill bg-primary">Venues</span>
+            <span class="badge rounded-pill bg-primary">By venue</span>
             {%- for k, v in author.tags.Venue -%}
             <span class="badge rounded-pill bg-light text-dark">{{k}}: {{v}}</span>
             {%- endfor -%}
         </div><div class="row-cards">
-            <span class="badge rounded-pill bg-primary">Years</span>
+            <span class="badge rounded-pill bg-primary">By year</span>
             {%- for k, v in author.tags.Year -%}
             <span class="badge rounded-pill bg-light text-dark">{{k}}: {{v}}</span>
             {%- endfor -%}
         </div><div class="row-cards">
-            <span class="badge rounded-pill bg-primary">ISCA Section</span>
+            <span class="badge rounded-pill bg-primary">ISCA sessions</span>
             {%- for k, v in author.tags.Interspeech -%}
             <span class="badge rounded-pill bg-light text-dark">{{k}}: {{v}}</span>
             {%- endfor -%}
         </div><div class="row-cards">
-            <span class="badge rounded-pill bg-primary">IEEE Keyword</span>
+            <span class="badge rounded-pill bg-primary">IEEE keywords</span>
             {%- for k, v in author.tags.IEEE -%}
             <span class="badge rounded-pill bg-light text-dark">{{k}}: {{v}}</span>
             {%- endfor -%}
         </div><div class="row-cards">
-            <span class="badge rounded-pill bg-primary">Most Publications</span>
+            <span class="badge rounded-pill bg-primary">Most publications (all venues) at</span>
             {%- for k, v in author.years -%}
             <span class="badge rounded-pill bg-light text-dark">{{k}}: {{v}}</span>
             {%- endfor -%}
@@ -101,6 +104,7 @@
             <hr />
 
         <div>
+            <h6>Recent publications</h6>
             {%- for pub in author.pubs -%}
             <p style="margin-bottom: 3px;line-height: 130%; font-size: small">
                 <span style="color:#505b62">{{pub.tags.venue}}{{pub.tags.year}}</span>
